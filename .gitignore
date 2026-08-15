@@ -1,0 +1,54 @@
+# ==========================================================
+# HW05 - Performance Testing (MSSV 23127362)
+# Repo: software-testing-hw05
+# ==========================================================
+
+# --- Cong cu, KHONG nop, KHONG push (chi neu ten trong report) ---
+apache-jmeter*/
+jmeter/
+*.jar
+jre/
+jdk/
+
+# --- SUT nam o thu muc rieng D:\eshop-sut_1\, phong truong hop copy nham ---
+eshop-sut/
+node_modules/
+*.sqlite
+*.sqlite3
+*.db
+
+# --- File tam cua JMeter ---
+jmeter.log
+jmeter-server.log
+*.jtl.tmp
+bin/
+backups/
+
+# --- He dieu hanh ---
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+
+# --- File nhay cam: KHONG BAO GIO commit ---
+*.pem
+*.key
+token.txt
+credentials.txt
+.env
+
+# ==========================================================
+# CO Y KHONG ignore nhung thu sau - de bai BAT BUOC nop:
+#   *.jmx           test plan
+#   *.jtl           raw log (muc 11 anti-AI-cheat)
+#   results/**      HTML report folders
+#   data/*.csv      du lieu data-driven
+#   evidence/*.png  screenshot resource monitor + hardware
+# ==========================================================
+
+# Ngoai le: khong commit file .jtl NEN (chi commit ban goc)
+*.jtl.gz
