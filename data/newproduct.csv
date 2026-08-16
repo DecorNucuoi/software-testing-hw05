@@ -1,0 +1,6 @@
+base_name,price,description,image_url,category_id
+LTPERF_Widget,150000,LTPERF temp record A,https://example.com/img/a.png,1
+LTPERF_Gadget,250000,LTPERF temp record B,https://example.com/img/b.png,2
+LTPERF_Device,350000,LTPERF temp record C,https://example.com/img/c.png,3
+LTPERF_Module,450000,LTPERF temp record D,https://example.com/img/d.png,1
+LTPERF_Sensor,550000,LTPERF temp record E,https://example.com/img/e.png,2

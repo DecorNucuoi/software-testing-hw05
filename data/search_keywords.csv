@@ -1,0 +1,12 @@
+keyword,expect_count,covers
+iPhone,1,id1
+Samsung,1,id2
+Galaxy,1,id2
+MacBook,1,id3
+AirPods,1,id4
+Keychron,1,id5
+Q1,1,id5
+Pro,3,id1+id3+id4
+Max,1,id1
+S24,1,id2
+ZZZQQQNOMATCH,0,none
