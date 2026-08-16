@@ -1,0 +1,1621 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="EShop STRESS - 23127362 - 2026-08-15" enabled="true">
+      <stringProp name="TestPlan.comments">Kich ban STRESS. Tang tai theo bac de tim diem gay.
+Bac 25 -&gt; 50 -&gt; 100 -&gt; 200 -&gt; 300 thread, moi bac 300s (30s ramp + 270s hold).
+Ba Ultimate Thread Group (plugin jpgc-casutg 3.1.1), moi dong ket thuc tai t = 1500s.
+Cong don: TG-1 = 210, TG-2 = 75, TG-3 = 15.
+
+k = 0.25 -&gt; chu ky TG-1 = 5s, TG-2 = 0.5s, TG-3 = 3s.
+Ti le login KHONG DOI khi nhan chung mot he so k vao moi think time:
+rate_g = n_g*s_g/(k*c_g) nen k triet tieu o ca tu va mau.
+Throughput ly thuyet theo bac: 39.2 / 79.0 / 158.0 / 316.0 / 474.0 req/s
+Ghi vao SQLite theo bac:      20.5 / 42.0 /  84.7 / 169.3 / 254.0 lan/s
+Login share theo bac:         40.65 / 40.51 / 41.56 / 41.56 / 41.56 %
+
+TIEU CHI DIEM GAY -- TU THAM CHIEU, khong so voi baseline cua Load
+(ho so tai da khac nen p95 cua Load KHONG con la moc hop le):
+  TC-1 hieu suat throughput  E_i = X_i(dat)/X_i(ly thuyet) &lt; 0.90
+  TC-2 loi ich bien          m_i &lt; 0.5 * m_2   (m_2 = bac 25-&gt;50 lam moc noi tai)
+  TC-3 do tre tu tham chieu  p95_i &gt; 3 * p95 cua BAC 1 trong chinh run nay
+  TC-4 loi                   error rate &gt; 0, hoac bat ky loi ket noi/timeout nao
+Diem gay = bac thap nhat vi pham bat ky tieu chi nao.
+HIEU LUC: chi hop le neu CPU tien trinh JMeter &lt; 50% tong CPU tai bac do;
+neu khong, do la tran CONG CU chu khong phai tran SUT -- phai ghi ro nhu vay.
+
+Cua so phan tich: 60s cuoi moi bac.
+LUU Y: TG-3 o bac 1-2 chi co ~90 va ~180 mau DELETE -- chi bao cao count va
+median cho cac nhan cua TG-3 o hai bac do, KHONG bao cao p95.
+
+CHAY NGAY SAU KHI: restart server -&gt; provision-accounts.js -&gt; warm-up.
+Du lieu do lay tu file -l, KHONG lay tu listener.
+Aggregate Report co chu y de DISABLED khi chay: no phai giu toan bo ~306.000
+gia tri elapsed de tinh percentile, khong duoc an heap cua tien trinh tao tai.
+Bat no lai trong mot phien GUI rieng voi -Xmx2g de nap .jtl va chup man hinh.</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+
+      <!-- ================================================================ -->
+      <!-- CAU HINH CAP TEST PLAN                                           -->
+      <!-- ================================================================ -->
+
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="UDV-GLOBAL" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="LT_PASSWORD" elementType="Argument">
+            <stringProp name="Argument.name">LT_PASSWORD</stringProp>
+            <stringProp name="Argument.value">Loadtest123!</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Mat khau chung cua 300 tai khoan do provision-accounts.js tao</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="CFG-HTTP Defaults" enabled="true">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">127.0.0.1</stringProp>
+        <stringProp name="HTTPSampler.port">3000</stringProp>
+        <stringProp name="HTTPSampler.protocol">http</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        <stringProp name="HTTPSampler.path"></stringProp>
+        <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+        <stringProp name="HTTPSampler.connect_timeout">5000</stringProp>
+        <stringProp name="HTTPSampler.response_timeout">30000</stringProp>
+        <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HDR-COMMON" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Content-Type</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">User-Agent</stringProp>
+            <stringProp name="Header.value">JMeter-EShop-PerfTest/1.0</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV-1 products" enabled="true">
+        <stringProp name="filename">../data/products.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">pid_a,pid_b,qty</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV-2 coupons" enabled="true">
+        <stringProp name="filename">../data/coupons.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">code,total_amount,expect_success,expect_final_amount,expect_http,case_class</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV-3 search_keywords" enabled="true">
+        <stringProp name="filename">../data/search_keywords.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">keyword,expect_count,covers</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV-4 addresses" enabled="true">
+        <stringProp name="filename">../data/addresses.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">shipping_address</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV-5 newproduct" enabled="true">
+        <stringProp name="filename">../data/newproduct.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">base_name,price,description,image_url,category_id</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV-6 admin" enabled="true">
+        <stringProp name="filename">../data/admin.csv</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="variableNames">admin_email,admin_password</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+
+      <!-- ================================================================ -->
+      <!-- TG-1  MAIN USER JOURNEY   18-35-70-140-210 thread (70%) chu ky 5s -->
+      <!-- FR-06 xem chi tiet san pham | FR-09 ap dung ma giam gia          -->
+      <!-- ================================================================ -->
+
+      <kg.apc.jmeter.threads.UltimateThreadGroup guiclass="kg.apc.jmeter.threads.UltimateThreadGroupGui" testclass="kg.apc.jmeter.threads.UltimateThreadGroup" testname="TG-1 Main User Journey" enabled="true">
+        <collectionProp name="ultimatethreadgroupdata">
+          <collectionProp name="-145093636">
+            <stringProp name="1575">18</stringProp>
+            <stringProp name="48">0</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="1511391">1440</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-199037475">
+            <stringProp name="1574">17</stringProp>
+            <stringProp name="50547">300</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="1508508">1140</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-147613372">
+            <stringProp name="1634">35</stringProp>
+            <stringProp name="53430">600</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="55476">840</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-2103671007">
+            <stringProp name="1753">70</stringProp>
+            <stringProp name="56313">900</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="52593">540</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-1567364462">
+            <stringProp name="1753">70</stringProp>
+            <stringProp name="1509345">1200</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="49710">240</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+        </collectionProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="kg.apc.jmeter.control.VirtualUserController"/>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      </kg.apc.jmeter.threads.UltimateThreadGroup>
+      <hashTree>
+
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="UDV-TG1" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="TG_OFFSET" elementType="Argument">
+              <stringProp name="Argument.name">TG_OFFSET</stringProp>
+              <stringProp name="Argument.value">0</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Khoi MAIN: lt1 .. lt220. Bat bien: TG_OFFSET cua TG-2 (1000) phai lon hon so thread toi da cua TG-1.</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+
+        <!-- == Buoc 1: LOGIN_MAIN  (auth-heavy) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="LOGIN_MAIN" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{"email":"lt${__intSum(${__threadNum},${TG_OFFSET},)}@eshop.com","password":"${LT_PASSWORD}"}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/login</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 250ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">200</stringProp>
+            <stringProp name="RandomTimer.range">100.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="EXT-LOGIN" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">TOKEN;USER_ID</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token;$.user.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;NOT_FOUND</stringProp>
+            <boolProp name="JSONPostProcessor.compute_concat">false</boolProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-LOGIN" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters">TOKEN USER_ID</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">String tokVar = args[0]
+String uidVar = args[1]
+int code = -1
+try { code = SampleResult.getResponseCode().toInteger() } catch (Exception ignored) { }
+
+if (code == 401) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("401 - tai khoan khong ton tai tren SUT. Kiem tra TG_OFFSET va kich thuoc khoi provisioning (MAIN 1..220, AUTH 1001..1080).")
+    return
+}
+if (code == 403) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("403 - tai khoan bi khoa 180s. Hai thread dang dung chung mot tai khoan, hoac da co login sai truoc do.")
+    return
+}
+if (code != 200) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("HTTP " + code + " (mong doi 200)")
+    return
+}
+String tok = vars.get(tokVar)
+if (tok == null || tok.isEmpty() || tok.equals("NOT_FOUND")) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("HTTP 200 nhung khong trich duoc token. Moi sampler can auth phia sau se hong theo - nguyen nhan goc nam o day.")
+    return
+}
+String uid = vars.get(uidVar)
+if (uid == null || !uid.isInteger() || uid.toInteger() &lt;= 0) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("user.id khong hop le: " + uid)
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 2: SEARCH  (read-heavy) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="SEARCH" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/products?search=${__urlencode(${keyword})}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 500ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">400</stringProp>
+            <stringProp name="RandomTimer.range">200.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-SEARCH-COUNT" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+String body = SampleResult.getResponseDataAsString()
+int want = 0
+try {
+    want = vars.get("expect_count").toInteger()
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("expect_count khong doc duoc tu CSV: " + vars.get("expect_count"))
+    return
+}
+
+def arr = null
+try {
+    arr = new JsonSlurper().parseText(body)
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("khong parse duoc JSON: " + e.getMessage() + " | body=" + body.take(200))
+    return
+}
+
+if (!(arr instanceof List)) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("response khong phai mang tran nhu mong doi")
+    return
+}
+
+if (arr.size() != want) {
+    String hint = ""
+    if (arr.size() &gt; want) { hint = " -- nghi ngo san pham LTPERF cua nhanh admin chua duoc DELETE" }
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("keyword='" + vars.get("keyword") + "' tra ve " + arr.size() + " ket qua, mong doi " + want + hint)
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 3: DETAIL_A  (read-heavy, FR-06) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DETAIL_A" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/products/${pid_a}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 750ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">600</stringProp>
+            <stringProp name="RandomTimer.range">300.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="EXT-DETAIL-A" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">PRICE_A;NAME_A</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.price;$.name</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;NOT_FOUND</stringProp>
+            <boolProp name="JSONPostProcessor.compute_concat">false</boolProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-DETAIL" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters">pid_a</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+String wantId = vars.get(args[0])
+String body = SampleResult.getResponseDataAsString()
+
+def j = null
+try {
+    j = new JsonSlurper().parseText(body)
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("khong parse duoc JSON: " + e.getMessage() + " | body=" + body.take(200))
+    return
+}
+
+if (!(j instanceof Map) || j.isEmpty()) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("BAY 200-BODY-RONG: id=" + wantId + " tra HTTP 200 kem body rong {}. Ma trang thai HTTP KHONG phat hien duoc loi nay.")
+    return
+}
+if (j.id == null || !(j.id.toString().equals(wantId))) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("id tra ve=" + j.id + " khac id da yeu cau=" + wantId)
+    return
+}
+if (j.name == null || j.name.toString().trim().isEmpty()) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("thieu truong name")
+    return
+}
+if (!(j.price instanceof Number) || ((Number) j.price).doubleValue() &lt;= 0) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("price khong hop le: " + j.price)
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 4: DETAIL_B  (read-heavy, FR-06) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DETAIL_B" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/products/${pid_b}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 1250ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">500.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-DETAIL" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters">pid_b</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+String wantId = vars.get(args[0])
+String body = SampleResult.getResponseDataAsString()
+
+def j = null
+try {
+    j = new JsonSlurper().parseText(body)
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("khong parse duoc JSON: " + e.getMessage() + " | body=" + body.take(200))
+    return
+}
+
+if (!(j instanceof Map) || j.isEmpty()) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("BAY 200-BODY-RONG: id=" + wantId + " tra HTTP 200 kem body rong {}. Ma trang thai HTTP KHONG phat hien duoc loi nay.")
+    return
+}
+if (j.id == null || !(j.id.toString().equals(wantId))) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("id tra ve=" + j.id + " khac id da yeu cau=" + wantId)
+    return
+}
+if (j.name == null || j.name.toString().trim().isEmpty()) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("thieu truong name")
+    return
+}
+if (!(j.price instanceof Number) || ((Number) j.price).doubleValue() &lt;= 0) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("price khong hop le: " + j.price)
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 5: CART  (transactional, can token) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CART" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{"id":${pid_a},"name":"${NAME_A}","price":${PRICE_A},"quantity":${qty}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/cart</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 1000ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">800</stringProp>
+            <stringProp name="RandomTimer.range">400.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HDR-AUTH-USER" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${TOKEN}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-CART" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">// Body cua SUT la chuoi co dinh {"message":"Added to cart"} - khong co noi dung
+// ngu nghia nao de kiem tra. Gia tri that cua assertion nay nam o cho khac:
+// no chi ra rang neu CART hong thi nguyen nhan goc thuong o LOGIN_MAIN.
+String tok = vars.get("TOKEN")
+if (tok == null || tok.isEmpty() || tok.equals("NOT_FOUND")) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("TOKEN rong hoac NOT_FOUND -- nguyen nhan goc nam o LOGIN_MAIN, khong phai o CART")
+    return
+}
+String body = SampleResult.getResponseDataAsString()
+if (!body.contains("Added to cart")) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("body khong chua chuoi 'Added to cart': " + body.take(200))
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 6: COUPON  (transactional, FR-09, KHONG gui token - co y) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="COUPON_${case_class}" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{"code":"${code}","total_amount":${total_amount},"user_id":${USER_ID}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/apply-coupon</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 500ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">400</stringProp>
+            <stringProp name="RandomTimer.range">200.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="EXT-COUPON" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">FINAL_AMOUNT</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.final_amount</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            <boolProp name="JSONPostProcessor.compute_concat">false</boolProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="PP-COUPON-FALLBACK" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">// 4/10 dong trong coupons.csv la nhanh tu choi hop le (BELOW_MIN, EXPIRED,
+// INVALID). Nhung dong do khong co final_amount, nen FINAL_AMOUNT se la
+// NOT_FOUND va CHECKOUT se gui JSON hong -> loi gia.
+// Hanh vi thuc te cua nguoi dung khi ma giam gia bi tu choi: van thanh toan
+// voi so tien goc. Day chinh la ung xu duoc cai dat o day.
+String fa = vars.get("FINAL_AMOUNT")
+if (fa == null || !fa.isNumber()) {
+    vars.put("FINAL_AMOUNT", vars.get("total_amount"))
+}</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-RESET_STATUS (Ignore Status)" enabled="true">
+            <collectionProp name="Asserion.test_strings"/>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">true</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-COUPON-BUSINESS" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+// Phan tu RA-RESET_STATUS o TREN da xoa co fail do 4xx (400 cho BELOW_MIN va
+// EXPIRED, 404 cho INVALID). Nhung no xoa voi MOI ma, ke ca 500. Vi vay viec
+// kiem tra ma HTTP tuong minh o day la BAT BUOC - no bu lai dung cai ma lop
+// tren vua vo hieu hoa.
+String body = SampleResult.getResponseDataAsString()
+int code = -1
+try { code = SampleResult.getResponseCode().toInteger() } catch (Exception ignored) { }
+
+int wantHttp = -1
+try {
+    wantHttp = vars.get("expect_http").toInteger()
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("expect_http khong doc duoc tu CSV: " + vars.get("expect_http"))
+    return
+}
+boolean wantOk = "true".equals(vars.get("expect_success"))
+
+List problems = []
+if (code != wantHttp) { problems.add("http=" + code + " (mong doi " + wantHttp + ")") }
+
+try {
+    def j = new JsonSlurper().parseText(body)
+    if (wantOk) {
+        if (j.success != true) { problems.add("success=" + j.success) }
+        BigDecimal want = new BigDecimal(vars.get("expect_final_amount"))
+        BigDecimal got = (j.final_amount == null) ? null : new BigDecimal(j.final_amount.toString())
+        if (got == null || got.compareTo(want) != 0) {
+            problems.add("final_amount=" + got + " (mong doi " + want + ")")
+        }
+    } else {
+        if (j.success == true) { problems.add("success=true nhung dong CSV mong doi bi tu choi") }
+        if (j.error == null) { problems.add("thieu truong error") }
+    }
+} catch (Exception e) {
+    problems.add("khong parse duoc JSON: " + e.getMessage())
+}
+
+if (!problems.isEmpty()) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("code=" + vars.get("code")
+        + " total=" + vars.get("total_amount")
+        + " class=" + vars.get("case_class")
+        + " :: " + problems.join(" | ")
+        + " :: body=" + body.take(200))
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 7: CHECKOUT  (transactional, can token) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CHECKOUT" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{"total_amount":${FINAL_AMOUNT},"shipping_address":"${shipping_address}"}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/checkout</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 750ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">600</stringProp>
+            <stringProp name="RandomTimer.range">300.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HDR-AUTH-USER" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${TOKEN}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-CHECKOUT" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+// orderId la kiem tra NGU NGHIA THAT duy nhat cua nhanh transactional phia user:
+// no xac nhan INSERT vao bang orders da tra ve lastID.
+// LUU Y: KHONG assert gia tri total_amount da ghi. SUT ghi thang so tien do
+// client gui, va voi ma percent thi con so do sai co chu y (500000 -> 5000000).
+// Viec do kiem bang cong SQL sau run, khong kiem trong test plan.
+String tok = vars.get("TOKEN")
+if (tok == null || tok.isEmpty() || tok.equals("NOT_FOUND")) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("TOKEN rong hoac NOT_FOUND -- nguyen nhan goc nam o LOGIN_MAIN")
+    return
+}
+
+String body = SampleResult.getResponseDataAsString()
+def j = null
+try {
+    j = new JsonSlurper().parseText(body)
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("khong parse duoc JSON: " + e.getMessage() + " | body=" + body.take(200))
+    return
+}
+
+if (!(j.orderId instanceof Number) || ((Number) j.orderId).longValue() &lt;= 0) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("orderId khong hop le: " + j.orderId + " -- INSERT vao bang orders co the da that bai")
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+      </hashTree>
+
+      <!-- ================================================================ -->
+      <!-- TG-2  AUTH BURST   6-12-25-50-75 thread (25%)  chu ky 0.5s        -->
+      <!-- Nhiem vu duy nhat: day ti le login len nguong auth-heavy         -->
+      <!-- ================================================================ -->
+
+      <kg.apc.jmeter.threads.UltimateThreadGroup guiclass="kg.apc.jmeter.threads.UltimateThreadGroupGui" testclass="kg.apc.jmeter.threads.UltimateThreadGroup" testname="TG-2 Auth Burst" enabled="true">
+        <collectionProp name="ultimatethreadgroupdata">
+          <collectionProp name="10429005">
+            <stringProp name="54">6</stringProp>
+            <stringProp name="48">0</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="1511391">1440</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-1576169011">
+            <stringProp name="54">6</stringProp>
+            <stringProp name="50547">300</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="1508508">1140</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-2141648636">
+            <stringProp name="1570">13</stringProp>
+            <stringProp name="53430">600</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="55476">840</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-603175669">
+            <stringProp name="1603">25</stringProp>
+            <stringProp name="56313">900</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="52593">540</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="1998318056">
+            <stringProp name="1603">25</stringProp>
+            <stringProp name="1509345">1200</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="49710">240</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+        </collectionProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="kg.apc.jmeter.control.VirtualUserController"/>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      </kg.apc.jmeter.threads.UltimateThreadGroup>
+      <hashTree>
+
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="UDV-TG2" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="TG_OFFSET" elementType="Argument">
+              <stringProp name="Argument.name">TG_OFFSET</stringProp>
+              <stringProp name="Argument.value">1000</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Khoi AUTH: lt1001 .. lt1080. Offset 1000 khien chong lan voi khoi MAIN bat kha thi ve cau truc voi moi cau hinh duoi 1000 thread.</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="LOGIN_AUTH" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{"email":"lt${__intSum(${__threadNum},${TG_OFFSET},)}@eshop.com","password":"${LT_PASSWORD}"}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/login</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 500ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">400</stringProp>
+            <stringProp name="RandomTimer.range">200.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="EXT-LOGIN" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">TOKEN;USER_ID</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token;$.user.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;NOT_FOUND</stringProp>
+            <boolProp name="JSONPostProcessor.compute_concat">false</boolProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-LOGIN" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters">TOKEN USER_ID</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">String tokVar = args[0]
+String uidVar = args[1]
+int code = -1
+try { code = SampleResult.getResponseCode().toInteger() } catch (Exception ignored) { }
+
+if (code == 401) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("401 - tai khoan khong ton tai tren SUT. Kiem tra TG_OFFSET va kich thuoc khoi provisioning (MAIN 1..220, AUTH 1001..1080).")
+    return
+}
+if (code == 403) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("403 - tai khoan bi khoa 180s. Hai thread dang dung chung mot tai khoan, hoac da co login sai truoc do.")
+    return
+}
+if (code != 200) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("HTTP " + code + " (mong doi 200)")
+    return
+}
+String tok = vars.get(tokVar)
+if (tok == null || tok.isEmpty() || tok.equals("NOT_FOUND")) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("HTTP 200 nhung khong trich duoc token. Moi sampler can auth phia sau se hong theo - nguyen nhan goc nam o day.")
+    return
+}
+String uid = vars.get(uidVar)
+if (uid == null || !uid.isInteger() || uid.toInteger() &lt;= 0) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("user.id khong hop le: " + uid)
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+      </hashTree>
+
+      <!-- ================================================================ -->
+      <!-- TG-3  ADMIN   1-3-5-10-15 thread (5%)  chu ky 3s                  -->
+      <!-- FR-15 quan ly san pham: CREATE -> READ -> UPDATE -> DELETE       -->
+      <!-- ================================================================ -->
+
+      <kg.apc.jmeter.threads.UltimateThreadGroup guiclass="kg.apc.jmeter.threads.UltimateThreadGroupGui" testclass="kg.apc.jmeter.threads.UltimateThreadGroup" testname="TG-3 Admin FR-15" enabled="true">
+        <collectionProp name="ultimatethreadgroupdata">
+          <collectionProp name="-1756745166">
+            <stringProp name="49">1</stringProp>
+            <stringProp name="48">0</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="1511391">1440</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="465967697">
+            <stringProp name="50">2</stringProp>
+            <stringProp name="50547">300</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="1508508">1140</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-107862252">
+            <stringProp name="50">2</stringProp>
+            <stringProp name="53430">600</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="55476">840</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-846270595">
+            <stringProp name="53">5</stringProp>
+            <stringProp name="56313">900</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="52593">540</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+          <collectionProp name="-1242657354">
+            <stringProp name="53">5</stringProp>
+            <stringProp name="1509345">1200</stringProp>
+            <stringProp name="1629">30</stringProp>
+            <stringProp name="49710">240</stringProp>
+            <stringProp name="1629">30</stringProp>
+          </collectionProp>
+        </collectionProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="kg.apc.jmeter.control.VirtualUserController"/>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      </kg.apc.jmeter.threads.UltimateThreadGroup>
+      <hashTree>
+
+        <!-- == Buoc 1: LOGIN_ADMIN  (auth-heavy) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="LOGIN_ADMIN" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{"email":"${admin_email}","password":"${admin_password}"}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/login</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 250ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">200</stringProp>
+            <stringProp name="RandomTimer.range">100.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="EXT-LOGIN-ADMIN" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">ADMIN_TOKEN;ADMIN_USER_ID</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token;$.user.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;NOT_FOUND</stringProp>
+            <boolProp name="JSONPostProcessor.compute_concat">false</boolProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-LOGIN" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters">ADMIN_TOKEN ADMIN_USER_ID</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">String tokVar = args[0]
+String uidVar = args[1]
+int code = -1
+try { code = SampleResult.getResponseCode().toInteger() } catch (Exception ignored) { }
+
+if (code == 401) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("401 - tai khoan admin khong ton tai. Server co duoc restart va seed lai khong?")
+    return
+}
+if (code == 403) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("403 - tai khoan admin bi khoa 180s. Ca 3 thread cua TG-3 dung chung admin@eshop.com nen mot lan login sai se lam chet ca nhanh admin.")
+    return
+}
+if (code != 200) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("HTTP " + code + " (mong doi 200)")
+    return
+}
+String tok = vars.get(tokVar)
+if (tok == null || tok.isEmpty() || tok.equals("NOT_FOUND")) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("HTTP 200 nhung khong trich duoc token admin.")
+    return
+}
+String uid = vars.get(uidVar)
+if (uid == null || !uid.isInteger() || uid.toInteger() &lt;= 0) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("user.id khong hop le: " + uid)
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 2: ADMIN_SEARCH  (read-heavy, khong gui token - GET cong khai) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="ADMIN_SEARCH" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/products?search=${__urlencode(${keyword})}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 500ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">400</stringProp>
+            <stringProp name="RandomTimer.range">200.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-SEARCH-COUNT" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+String body = SampleResult.getResponseDataAsString()
+int want = 0
+try {
+    want = vars.get("expect_count").toInteger()
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("expect_count khong doc duoc tu CSV: " + vars.get("expect_count"))
+    return
+}
+
+def arr = null
+try {
+    arr = new JsonSlurper().parseText(body)
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("khong parse duoc JSON: " + e.getMessage() + " | body=" + body.take(200))
+    return
+}
+
+if (!(arr instanceof List)) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("response khong phai mang tran nhu mong doi")
+    return
+}
+
+if (arr.size() != want) {
+    String hint = ""
+    if (arr.size() &gt; want) { hint = " -- nghi ngo san pham LTPERF cua nhanh admin chua duoc DELETE" }
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("keyword='" + vars.get("keyword") + "' tra ve " + arr.size() + " ket qua, mong doi " + want + hint)
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 3: ADMIN_CREATE  (transactional, FR-15 C) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="ADMIN_CREATE" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{"name":"${base_name}_${__threadNum}_${__counter(FALSE,LT_SEQ)}","price":${price},"description":"${description}","imageUrl":"${image_url}","category_id":${category_id}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/products</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 500ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">400</stringProp>
+            <stringProp name="RandomTimer.range">200.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HDR-AUTH-ADMIN" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${ADMIN_TOKEN}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="EXT-NEW-PID" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">NEW_PID</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            <boolProp name="JSONPostProcessor.compute_concat">false</boolProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-BODY-HAS-ID" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="1116933">&quot;id&quot;</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-ADMIN-CREATE" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+String body = SampleResult.getResponseDataAsString()
+def j = null
+try {
+    j = new JsonSlurper().parseText(body)
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("khong parse duoc JSON: " + e.getMessage() + " | body=" + body.take(200))
+    return
+}
+
+if (!(j.id instanceof Number)) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("khong co truong id kieu so trong response: " + body.take(200))
+    return
+}
+
+long newId = ((Number) j.id).longValue()
+if (newId &lt;= 5) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("CHOT CHAN AN TOAN: id=" + newId + " nam trong dai seed 1..5. Neu PUT/DELETE chay tiep se pha huy mot san pham seed va lam hong bat bien 'products = 5 dong' cho toan bo run.")
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 4: ADMIN_GET  (read-heavy, FR-15 R, khong gui token) == -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="ADMIN_GET" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/products/${NEW_PID}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 500ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">400</stringProp>
+            <stringProp name="RandomTimer.range">200.0</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-DETAIL" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters">NEW_PID</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.json.JsonSlurper
+
+String wantId = vars.get(args[0])
+String body = SampleResult.getResponseDataAsString()
+
+def j = null
+try {
+    j = new JsonSlurper().parseText(body)
+} catch (Exception e) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("khong parse duoc JSON: " + e.getMessage() + " | body=" + body.take(200))
+    return
+}
+
+if (!(j instanceof Map) || j.isEmpty()) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("BAY 200-BODY-RONG: san pham vua tao id=" + wantId + " doc lai ra body rong {}. CREATE co the da khong ghi that su.")
+    return
+}
+if (j.id == null || !(j.id.toString().equals(wantId))) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("id tra ve=" + j.id + " khac id da yeu cau=" + wantId)
+    return
+}
+if (j.name == null || j.name.toString().trim().isEmpty()) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("thieu truong name")
+    return
+}
+if (!(j.price instanceof Number) || ((Number) j.price).doubleValue() &lt;= 0) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("price khong hop le: " + j.price)
+}</stringProp>
+          </JSR223Assertion>
+          <hashTree/>
+        </hashTree>
+
+        <!-- == Buoc 5+6: UPDATE va DELETE, boc trong If Controller == -->
+        <!-- PHONG NGUA, khong phai phat hien: neu NEW_PID khong hop le thi -->
+        <!-- hai lenh pha huy nay khong duoc phep chay.                     -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF NEW_PID hop le (la so va &gt; 5)" enabled="true">
+          <stringProp name="IfController.condition">${__groovy((vars.get("NEW_PID") ?: "0").isInteger() &amp;&amp; (vars.get("NEW_PID") ?: "0").toInteger() &gt; 5)}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+        </IfController>
+        <hashTree>
+
+          <!-- == Buoc 5: ADMIN_UPDATE  (transactional, FR-15 U) == -->
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="ADMIN_UPDATE" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{"name":"${base_name}_${__threadNum}_${LT_SEQ}_v2","price":${price},"description":"${description} updated","imageUrl":"${image_url}","category_id":${category_id}}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/products/${NEW_PID}</stringProp>
+            <stringProp name="HTTPSampler.method">PUT</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 750ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">600</stringProp>
+            <stringProp name="RandomTimer.range">300.0</stringProp>
+          </UniformRandomTimer>
+            <hashTree/>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HDR-AUTH-ADMIN" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Authorization</stringProp>
+                  <stringProp name="Header.value">Bearer ${ADMIN_TOKEN}</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">8</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-ADMIN-UPDATE (gioi han da biet)" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">/*
+ GIOI HAN DA BIET - xac minh bang thuc nghiem tren SUT:
+   PUT /api/products/9999 voi id KHONG TON TAI van tra
+   HTTP 200 {"message":"Product updated"}
+ vi ma nguon khong kiem tra this.changes.
+
+ Assertion nay VI VAY chi con hai gia tri:
+   - bat HTTP 500
+   - bat body sai dinh dang
+ No KHONG THE xac nhan rang ban ghi da thuc su duoc cap nhat.
+
+ Viec bao ve bat bien "products = 5 dong" chi con HAI lop that su:
+   (1) assertion expect_count cua SEARCH / ADMIN_SEARCH, chay lien tuc trong run
+   (2) cong SQL sau run: SELECT COUNT(*) FROM products phai bang 5
+ If Controller boc ngoai la lop PHONG NGUA, khong phai lop xac minh.
+*/
+String body = SampleResult.getResponseDataAsString()
+if (!body.contains("Product updated")) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("body khong chua chuoi 'Product updated': " + body.take(200))
+}</stringProp>
+            </JSR223Assertion>
+            <hashTree/>
+          </hashTree>
+
+          <!-- == Buoc 6: ADMIN_DELETE  (transactional, FR-15 D, BAT BUOC) == -->
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="ADMIN_DELETE" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/products/${NEW_PID}</stringProp>
+            <stringProp name="HTTPSampler.method">DELETE</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="THINK 500ms" enabled="true">
+            <stringProp name="ConstantTimer.delay">400</stringProp>
+            <stringProp name="RandomTimer.range">200.0</stringProp>
+          </UniformRandomTimer>
+            <hashTree/>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HDR-AUTH-ADMIN" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Authorization</stringProp>
+                  <stringProp name="Header.value">Bearer ${ADMIN_TOKEN}</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="RA-CODE-200" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">8</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR-ADMIN-DELETE (gioi han da biet)" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">/*
+ GIOI HAN DA BIET - xac minh bang thuc nghiem tren SUT:
+   DELETE /api/products/9999 voi id KHONG TON TAI van tra
+   HTTP 200 {"message":"Product deleted"}
+ vi ma nguon khong kiem tra this.changes.
+
+ Hau qua truc tiep: sampler nay KHONG THE tu chung minh rang no da don dep
+ thanh cong. Bat bien "products = 5 dong" duoc bao dam boi HAI lop khac:
+   (1) assertion expect_count cua SEARCH / ADMIN_SEARCH trong suot run
+   (2) cong SQL sau run: SELECT COUNT(*) FROM products phai bang 5
+ va mot luoi an toan cuoi cung la tearDown Thread Group.
+*/
+String body = SampleResult.getResponseDataAsString()
+if (!body.contains("Product deleted")) {
+    AssertionResult.setFailure(true)
+    AssertionResult.setFailureMessage("body khong chua chuoi 'Product deleted': " + body.take(200))
+}</stringProp>
+            </JSR223Assertion>
+            <hashTree/>
+          </hashTree>
+
+        </hashTree>
+
+      </hashTree>
+
+      <!-- ================================================================ -->
+      <!-- tearDown  -  luoi an toan cuoi cung cho bat bien products = 5    -->
+      <!-- Bat moi san pham LTPERF con sot lai do thread bi kill giua iteration -->
+      <!-- TIEN TO PHAI LA 'LTPERF', KHONG DUOC LA 'LT_':                       -->
+      <!--   (1) trong SQL LIKE, dau gach duoi la wildcard MOT KY TU            -->
+      <!--   (2) LIKE cua SQLite khong phan biet hoa thuong voi ky tu ASCII      -->
+      <!--   => mau '%LT_%' khop 'U-l-t-r-a' trong 'Samsung Galaxy S24 Ultra'    -->
+      <!--   => tearDown se XOA san pham seed id=2. Da xac minh tren SUT that.   -->
+      <!-- ================================================================ -->
+
+      <PostThreadGroup guiclass="PostThreadGroupGui" testclass="PostThreadGroup" testname="tearDown - Cleanup LTPERF products" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.delayedStart">false</boolProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </PostThreadGroup>
+      <hashTree>
+
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="TEARDOWN_SEARCH_LTPERF" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.path">/api/products?search=LTPERF</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="EXT-CLEAN-IDS" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">CLEAN_ID</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$[*].id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NONE</stringProp>
+            <boolProp name="JSONPostProcessor.compute_concat">false</boolProp>
+          </JSONPostProcessor>
+          <hashTree/>
+        </hashTree>
+
+        <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="FOREACH san pham LTPERF con sot" enabled="true">
+          <stringProp name="ForeachController.inputVal">CLEAN_ID</stringProp>
+          <stringProp name="ForeachController.returnVal">DEL_ID</stringProp>
+          <boolProp name="ForeachController.useSeparator">false</boolProp>
+          <stringProp name="ForeachController.startIndex"></stringProp>
+          <stringProp name="ForeachController.endIndex"></stringProp>
+        </ForeachController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="TEARDOWN_DELETE_LTPERF" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.path">/api/products/${DEL_ID}</stringProp>
+            <stringProp name="HTTPSampler.method">DELETE</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+        </hashTree>
+
+      </hashTree>
+
+      <!-- ================================================================ -->
+      <!-- LISTENER  -  Aggregate Report, DISABLED khi chay non-GUI          -->
+      <!-- Du lieu do lay tu file -l. Listener nay chi de mo lai .jtl trong -->
+      <!-- GUI sau khi chay va chup man hinh cho bao cao.                   -->
+      <!-- Aggregate Report phai giu TOAN BO gia tri elapsed de tinh        -->
+      <!-- percentile: O(so sample) ~ 306.000 gia tri. Voi -Xmx1g dang tao   -->
+      <!-- tai cho 300 thread thi do la rui ro khong can thiet. Bat lai no    -->
+      <!-- trong phien GUI rieng (-Xmx2g) de nap .jtl va chup man hinh.       -->
+      <!-- ================================================================ -->
+
+      <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>false</message>
+            <threadName>false</threadName>
+            <dataType>false</dataType>
+            <encoding>false</encoding>
+            <assertions>false</assertions>
+            <subresults>false</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>false</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>false</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
