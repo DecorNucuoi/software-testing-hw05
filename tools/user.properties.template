@@ -1,0 +1,84 @@
+# =============================================================================
+#  EShop perf test  --  cau hinh ghi .jtl
+#  23127362  --  2026-08-15
+#
+#  CACH DUNG: chep NOI DUNG file nay noi vao cuoi <JMETER_HOME>/bin/user.properties
+#  Dung ghi de file goc cua JMeter. Sao luu ban goc truoc khi sua.
+#
+#  Nguyen tac: file .jtl la NGUON DUY NHAT cho moi con so trong bao cao.
+#  Cot nao phuc vu mot phep tinh cu the thi giu, con lai bo.
+# =============================================================================
+
+# ---- Dinh dang --------------------------------------------------------------
+jmeter.save.saveservice.output_format=csv
+jmeter.save.saveservice.print_field_names=true
+jmeter.save.saveservice.default_delimiter=,
+jmeter.save.saveservice.timestamp_format=ms
+jmeter.save.saveservice.autoflush=false
+
+# ---- BAT BUOC GIU -----------------------------------------------------------
+#   time        -> p95, va Sum(elapsed LOGIN)/Sum(elapsed all)
+#   label       -> tach theo endpoint, dem ti le login
+#   code        -> phan tich 400 (BELOW_MIN, EXPIRED) vs 404 (INVALID),
+#                  va phat hien 500 bi RA-RESET_STATUS che mat
+#   successful  -> technical error rate
+#   failure msg -> thong bao chan doan do JSR223 sinh ra (rong o sample dat)
+#   thread_counts -> quy sample ve dung bac tai, do thi active-threads
+#   bytes/sent  -> cot KB/sec va Avg.Bytes cua Summary Report + Aggregate Report
+#                  (yeu cau listener cua de bai quyet dinh viec giu hai cot nay)
+jmeter.save.saveservice.time=true
+jmeter.save.saveservice.label=true
+jmeter.save.saveservice.response_code=true
+jmeter.save.saveservice.successful=true
+jmeter.save.saveservice.assertion_results_failure_message=true
+jmeter.save.saveservice.thread_counts=true
+jmeter.save.saveservice.bytes=true
+jmeter.save.saveservice.sent_bytes=true
+jmeter.save.saveservice.latency=true
+jmeter.save.saveservice.connect_time=true
+
+# ---- BO DE GIAM KICH THUOC --------------------------------------------------
+#   thread_name bo duoc vi nhan da phan biet ba nhanh login:
+#   LOGIN_MAIN / LOGIN_AUTH / LOGIN_ADMIN. Day la cot tiet kiem lon nhat (~25 B/dong).
+#   NEU lenh sinh bao cao HTML (-g) bao loi thieu cot, bat lai thread_name=true.
+jmeter.save.saveservice.thread_name=false
+jmeter.save.saveservice.response_message=false
+jmeter.save.saveservice.data_type=false
+jmeter.save.saveservice.url=false
+jmeter.save.saveservice.hostname=false
+jmeter.save.saveservice.idle_time=false
+jmeter.save.saveservice.encoding=false
+jmeter.save.saveservice.filename=false
+jmeter.save.saveservice.sample_count=false
+jmeter.save.saveservice.subresults=false
+jmeter.save.saveservice.assertions=false
+
+# ---- KHONG BAO GIO ghi body vao .jtl chinh ----------------------------------
+#  View Results Tree cua plan Spike co cau hinh RIENG trong hop thoai Configure
+#  cua chinh no, GHI DE cac gia tri duoi day. Do la ly do VRT-Observer van luu
+#  duoc response data du mac dinh toan cuc la false.
+jmeter.save.saveservice.response_data=false
+jmeter.save.saveservice.response_data.on_error=false
+jmeter.save.saveservice.samplerData=false
+jmeter.save.saveservice.requestHeaders=false
+jmeter.save.saveservice.responseHeaders=false
+
+# ---- Hanh vi HTTP -----------------------------------------------------------
+#  retrycount=0: mot lan retry am tham se lam sai ca elapsed lan error rate
+httpclient4.retrycount=0
+hc.parameters.file=hc.parameters
+
+# ---- Tien ich ---------------------------------------------------------------
+summariser.interval=30
+jmeter.reportgenerator.overall_granularity=5000
+
+# =============================================================================
+#  Uoc tinh kich thuoc .jtl voi cau hinh nay
+#    header : timeStamp,elapsed,label,responseCode,success,failureMessage,
+#             bytes,sentBytes,grpThreads,allThreads,Latency,Connect
+#    1 dong ~ 57-70 byte
+#    Load   ~  19.000 sample  ->  ~1.4 MB
+#    Stress ~ 306.000 sample  ->  ~21 MB   (can tren; bao hoa thi nho hon)
+#    Spike  ~  17.000 sample  ->  ~1.2 MB
+#  Deu duoi xa gioi han cung 100 MB cua GitHub.
+# =============================================================================
