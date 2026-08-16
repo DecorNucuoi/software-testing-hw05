@@ -90,13 +90,76 @@ testplans/   4 test plan .jmx theo chuan {MSSV}_{ScenarioType}_{YYYYMMDD}
 data/        cac file CSV cho workflow data-driven
 results/     raw .jtl + HTML report folder cho tung kich ban
 evidence/    screenshot JMeter + Task Manager + dxdiag
-tools/       reset_lockout.js, monitor_node.ps1
+tools/       provision-accounts.js, check-keyword-collisions.js,
+             user.properties.template, reset_lockout.js, monitor_node.ps1
 docs/        report.md, AI_Audit_Report.md, AI_Critique.md, bug_report.md, git_commit_log.txt
 ```
 
 ---
 
-## 4. Cách chạy lại
+## 4. Bất biến của bộ dữ liệu test
+
+### 4.1 Bất biến từ khoá tìm kiếm
+
+> **Không từ khoá nào trong `data/search_keywords.csv` được là chuỗi con (không phân biệt
+> hoa thường) của bất kỳ tên sản phẩm nào nhánh admin sinh ra từ `data/newproduct.csv` —
+> kể cả phần `__threadNum` và `__counter`.**
+>
+> Mở rộng: tiền tố dọn dẹp của `tearDown` (`LTPERF`) không được chứa ký tự đại diện của
+> SQL LIKE, và không được khớp bất kỳ tên sản phẩm seed nào.
+
+**Vì sao cần bất biến này.** SUT tìm kiếm bằng cách nối chuỗi thẳng vào truy vấn:
+
+```js
+const query = `SELECT * FROM products WHERE name LIKE '%${searchQuery}%'`;
+```
+
+Truy vấn này **chỉ tìm trên cột `name`**, không đụng `description`. Có hai cơ chế khiến một
+từ khoá khớp nhầm:
+
+1. Trong SQL LIKE, `_` là **ký tự đại diện một ký tự** và `%` là ký tự đại diện nhiều ký tự.
+2. LIKE của SQLite **không phân biệt hoa thường** với ký tự ASCII (mặc định). Với ký tự
+   ngoài ASCII — như dấu tiếng Việt — thì vẫn phân biệt.
+
+**Hai lỗi có thật đã bị bắt bởi bất biến này:**
+
+| Lỗi | Cơ chế | Hậu quả nếu lọt |
+|---|---|---|
+| Tiền tố dọn dẹp là `LT_` | `_` là wildcard **và** LIKE không phân biệt hoa thường → mẫu `'%LT_%'` khớp cụm `U-l-t-r-a` trong `Samsung Galaxy S24 Ultra` | `tearDown` **xoá sản phẩm seed id=2** → `expect_count` của `Samsung`/`Galaxy` tụt về 0, các dòng `products.csv` dùng `pid=2` trỏ vào sản phẩm không tồn tại, cổng SQL `COUNT(*) products = 5` fail → run bị đánh dấu vô hiệu |
+| Từ khoá `15` | Tên tạm của nhánh admin là `LTPERF_<Base>_<__threadNum>_<__counter>`; chuỗi `15` xuất hiện ở **cả** phần thread number (thread 15, 150–159 khi TG-1 chạy 210 thread) **và** phần counter | `SEARCH` trả 2–3 kết quả thay vì 1 → assertion fail giả → phá tiêu chí `technical error rate = 0.00%` |
+
+### 4.2 Lệnh kiểm (chạy lại được)
+
+Chạy **mỗi khi sửa `search_keywords.csv` hoặc `newproduct.csv`**, và trước mỗi lần chạy đo:
+
+```powershell
+# Kiem offline - khong can SUT chay
+node tools\check-keyword-collisions.js
+
+# Mo rong pham vi enumerate (mac dinh threadNum 1..320 x counter 1..1000)
+node tools\check-keyword-collisions.js --max-threads 320 --max-counter 2000
+
+# Doi chieu them voi SUT dang chay: xac nhan 5 ten seed, do lai tung expect_count,
+# va kiem search=LTPERF tra ve 0 ket qua tren DB sach
+node tools\check-keyword-collisions.js --live
+```
+
+Exit code `0` = mọi bất biến đạt, `1` = có vi phạm. Bốn nhóm kiểm:
+
+| | Nội dung |
+|---|---|
+| **[A]** | Không từ khoá nào chứa `_` hoặc `%` |
+| **[B]** | Tiền tố `LTPERF` không chứa wildcard, không khớp tên seed nào (theo **ngữ nghĩa LIKE**, không phải so khớp chuỗi con), và phủ hết mọi `base_name` |
+| **[C]** | Không từ khoá nào khớp bất kỳ tên tạm nào trong 3.200.000 tổ hợp `base × threadNum × counter × {gốc, _v2}` |
+| **[D]** | `expect_count` của từng dòng khớp số lần khớp thực tế trong 5 tên seed, và cả 5 sản phẩm seed đều được ít nhất một từ khoá phủ |
+
+Công cụ mô phỏng **đúng ngữ nghĩa LIKE** (dịch `_`→ một ký tự, `%`→ chuỗi bất kỳ, gấp hoa
+thường chỉ với ASCII) chứ không dùng so khớp chuỗi con thường — nếu dùng so khớp thường
+thì chính lỗi `LT_` ở trên sẽ lọt qua, vì `LT_` không xuất hiện literal trong `Ultra`.
+
+---
+
+## 5. Cách chạy lại
 
 ```powershell
 # 1. Khoi dong SUT
@@ -118,7 +181,7 @@ jmeter -n -t testplans\23127362_Load_20260815.jmx `
 
 ---
 
-## 5. Bảng tự đánh giá
+## 6. Bảng tự đánh giá
 
 | No. | Criteria | Grade | Self-Assessed Grade |
 |-----|----------|-------|---------------------|
@@ -132,7 +195,7 @@ jmeter -n -t testplans\23127362_Load_20260815.jmx `
 
 ---
 
-## 6. Khai báo sử dụng AI
+## 7. Khai báo sử dụng AI
 
 **I use AI tools for the following tasks,** — chi tiết đầy đủ (tên công cụ, ngày giờ, prompt, output) trong `docs/AI_Audit_Report.md`.
 Phần phản biện AI: `docs/AI_Critique.md`.
