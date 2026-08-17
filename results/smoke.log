@@ -1,0 +1,140 @@
+2026-08-16 22:05:03,124 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2026-08-16 22:05:03,133 INFO o.a.j.JMeter: Loading user properties from: D:\HW05\apache-jmeter-5.6.3\bin\user.properties
+2026-08-16 22:05:03,133 INFO o.a.j.JMeter: Loading system properties from: D:\HW05\apache-jmeter-5.6.3\bin\system.properties
+2026-08-16 22:05:03,138 INFO o.a.j.JMeter: Copyright (c) 1998-2024 The Apache Software Foundation
+2026-08-16 22:05:03,138 INFO o.a.j.JMeter: Version 5.6.3
+2026-08-16 22:05:03,138 INFO o.a.j.JMeter: java.version=1.8.0_501
+2026-08-16 22:05:03,138 INFO o.a.j.JMeter: java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+2026-08-16 22:05:03,138 INFO o.a.j.JMeter: os.name=Windows 11
+2026-08-16 22:05:03,138 INFO o.a.j.JMeter: os.arch=amd64
+2026-08-16 22:05:03,139 INFO o.a.j.JMeter: os.version=10.0
+2026-08-16 22:05:03,139 INFO o.a.j.JMeter: file.encoding=UTF-8
+2026-08-16 22:05:03,139 INFO o.a.j.JMeter: java.awt.headless=true
+2026-08-16 22:05:03,139 INFO o.a.j.JMeter: Max memory     =1073741824
+2026-08-16 22:05:03,139 INFO o.a.j.JMeter: Available Processors =12
+2026-08-16 22:05:03,142 INFO o.a.j.JMeter: Default Locale=English (EN)
+2026-08-16 22:05:03,143 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2026-08-16 22:05:03,143 INFO o.a.j.JMeter: JMeterHome=D:\HW05\apache-jmeter-5.6.3
+2026-08-16 22:05:03,143 INFO o.a.j.JMeter: user.dir  =D:\HW05\software-testing-hw05\testplans
+2026-08-16 22:05:03,143 INFO o.a.j.JMeter: PWD       =D:\HW05\software-testing-hw05\testplans
+2026-08-16 22:05:03,144 INFO o.a.j.JMeter: IP: 192.168.1.7 Name: DESKTOP-6G4PPE1 FullName: DESKTOP-6G4PPE1
+2026-08-16 22:05:03,157 INFO o.a.j.s.FileServer: Default base='D:\HW05\software-testing-hw05\testplans'
+2026-08-16 22:05:03,159 INFO o.a.j.s.FileServer: Set new base='D:\HW05\software-testing-hw05\testplans'
+2026-08-16 22:05:03,276 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
+2026-08-16 22:05:03,300 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
+2026-08-16 22:05:03,306 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
+2026-08-16 22:05:03,311 INFO o.a.j.s.SaveService: Loading file: 23127362_Load_20260815.jmx
+2026-08-16 22:05:03,375 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2026-08-16 22:05:03,375 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2026-08-16 22:05:03,375 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2026-08-16 22:05:03,375 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2026-08-16 22:05:03,375 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
+2026-08-16 22:05:03,375 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
+2026-08-16 22:05:03,868 INFO o.a.j.JMeter: Creating summariser <summary>
+2026-08-16 22:05:03,882 INFO o.a.j.e.StandardJMeterEngine: Running the test!
+2026-08-16 22:05:03,883 INFO o.a.j.s.SampleEvent: List of sample_variables: []
+2026-08-16 22:05:03,883 INFO o.a.j.s.SampleEvent: List of sample_variables: []
+2026-08-16 22:05:03,887 INFO o.a.j.e.u.CompoundVariable: Note: Function class names must contain the string: '.functions.'
+2026-08-16 22:05:03,887 INFO o.a.j.e.u.CompoundVariable: Note: Function class names must not contain the string: '.gui.'
+2026-08-16 22:05:03,933 INFO o.a.j.r.ClassFinder: Will scan jar D:\HW05\apache-jmeter-5.6.3\lib\ext\jmeter-plugins-casutg-3.1.1.jar with filter ExtendsClassFilter [parents=[interface org.apache.jmeter.functions.Function], inner=false, contains=null, notContains=null]. Consider exposing JMeter plugins via META-INF/services, and add JMeter-Skip-Class-Scanning=true manifest attribute so JMeter can skip classfile scanning
+2026-08-16 22:05:03,947 INFO o.a.j.r.ClassFinder: Will scan jar D:\HW05\apache-jmeter-5.6.3\lib\ext\jmeter-plugins-manager.jar with filter ExtendsClassFilter [parents=[interface org.apache.jmeter.functions.Function], inner=false, contains=null, notContains=null]. Consider exposing JMeter plugins via META-INF/services, and add JMeter-Skip-Class-Scanning=true manifest attribute so JMeter can skip classfile scanning
+2026-08-16 22:05:04,299 INFO o.a.j.JMeter: Running test (1786892704299)
+2026-08-16 22:05:04,356 INFO o.a.j.e.StandardJMeterEngine: Starting ThreadGroup: 1 : TG-1 Main User Journey
+2026-08-16 22:05:04,356 INFO o.a.j.e.StandardJMeterEngine: Starting 35 threads for group TG-1 Main User Journey.
+2026-08-16 22:05:04,356 INFO o.a.j.e.StandardJMeterEngine: Thread will continue on error
+2026-08-16 22:05:04,356 INFO o.a.j.t.ThreadGroup: Starting thread group... number=1 threads=35 ramp-up=60 delayedStart=true
+2026-08-16 22:05:04,357 INFO o.a.j.t.ThreadGroup: Started thread group number 1
+2026-08-16 22:05:04,357 INFO o.a.j.e.StandardJMeterEngine: Starting ThreadGroup: 2 : TG-2 Auth Burst
+2026-08-16 22:05:04,357 INFO o.a.j.e.StandardJMeterEngine: Starting 12 threads for group TG-2 Auth Burst.
+2026-08-16 22:05:04,357 INFO o.a.j.e.StandardJMeterEngine: Thread will continue on error
+2026-08-16 22:05:04,357 INFO o.a.j.t.ThreadGroup: Starting thread group... number=2 threads=12 ramp-up=60 delayedStart=true
+2026-08-16 22:05:04,358 INFO o.a.j.t.ThreadGroup: Started thread group number 2
+2026-08-16 22:05:04,358 INFO o.a.j.e.StandardJMeterEngine: Starting ThreadGroup: 3 : TG-3 Admin FR-15
+2026-08-16 22:05:04,358 INFO o.a.j.e.StandardJMeterEngine: Starting 3 threads for group TG-3 Admin FR-15.
+2026-08-16 22:05:04,358 INFO o.a.j.e.StandardJMeterEngine: Thread will continue on error
+2026-08-16 22:05:04,358 INFO o.a.j.t.ThreadGroup: Starting thread group... number=3 threads=3 ramp-up=60 delayedStart=true
+2026-08-16 22:05:04,358 INFO o.a.j.t.ThreadGroup: Started thread group number 3
+2026-08-16 22:05:04,358 INFO o.a.j.e.StandardJMeterEngine: All thread groups have been started
+2026-08-16 22:05:04,370 INFO o.a.j.t.JMeterThread: Thread started: TG-3 Admin FR-15 3-1
+2026-08-16 22:05:04,371 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-1
+2026-08-16 22:05:04,371 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-1
+2026-08-16 22:05:04,372 INFO o.a.j.s.FileServer: Stored: ../data/admin.csv
+2026-08-16 22:05:04,389 INFO o.a.j.s.FileServer: Stored: ../data/newproduct.csv
+2026-08-16 22:05:04,391 INFO o.a.j.s.FileServer: Stored: ../data/addresses.csv
+2026-08-16 22:05:04,392 INFO o.a.j.s.FileServer: Stored: ../data/search_keywords.csv
+2026-08-16 22:05:04,393 INFO o.a.j.s.FileServer: Stored: ../data/coupons.csv
+2026-08-16 22:05:04,393 INFO o.a.j.s.FileServer: Stored: ../data/products.csv
+2026-08-16 22:05:05,496 INFO o.a.j.p.h.s.HTTPHCAbstractImpl: Local host = DESKTOP-6G4PPE1
+2026-08-16 22:05:05,502 INFO o.a.j.p.h.s.HTTPHC4Impl: HTTP request retry count = 0
+2026-08-16 22:05:05,503 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
+2026-08-16 22:05:05,503 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to UTF-8
+2026-08-16 22:05:05,503 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
+2026-08-16 22:05:05,503 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
+2026-08-16 22:05:06,127 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-2
+2026-08-16 22:05:07,896 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-3
+2026-08-16 22:05:09,661 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-4
+2026-08-16 22:05:09,816 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-2
+2026-08-16 22:05:11,425 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-5
+2026-08-16 22:05:13,193 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-6
+2026-08-16 22:05:14,960 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-7
+2026-08-16 22:05:15,273 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-3
+2026-08-16 22:05:16,724 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-8
+2026-08-16 22:05:18,492 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-9
+2026-08-16 22:05:20,258 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-10
+2026-08-16 22:05:20,729 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-4
+2026-08-16 22:05:22,022 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-11
+2026-08-16 22:05:23,788 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-12
+2026-08-16 22:05:25,553 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-13
+2026-08-16 22:05:26,184 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-5
+2026-08-16 22:05:27,319 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-14
+2026-08-16 22:05:29,090 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-15
+2026-08-16 22:05:30,047 INFO o.a.j.r.Summariser: summary +    114 in 00:00:26 =    4.4/s Avg:     4 Min:     1 Max:    87 Err:    12 (10.53%) Active: 21 Started: 21 Finished: 0
+2026-08-16 22:05:30,863 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-16
+2026-08-16 22:05:31,639 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-6
+2026-08-16 22:05:32,639 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-17
+2026-08-16 22:05:34,361 INFO o.a.j.t.JMeterThread: Thread started: TG-3 Admin FR-15 3-2
+2026-08-16 22:05:34,415 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-18
+2026-08-16 22:05:36,177 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-19
+2026-08-16 22:05:37,103 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-7
+2026-08-16 22:05:37,938 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-20
+2026-08-16 22:05:39,700 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-21
+2026-08-16 22:05:41,461 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-22
+2026-08-16 22:05:42,554 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-8
+2026-08-16 22:05:43,225 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-23
+2026-08-16 22:05:44,986 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-24
+2026-08-16 22:05:46,748 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-25
+2026-08-16 22:05:48,006 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-9
+2026-08-16 22:05:48,514 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-26
+2026-08-16 22:05:50,285 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-27
+2026-08-16 22:05:52,053 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-28
+2026-08-16 22:05:53,467 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-10
+2026-08-16 22:05:53,824 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-29
+2026-08-16 22:05:55,586 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-30
+2026-08-16 22:05:57,345 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-31
+2026-08-16 22:05:58,930 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-11
+2026-08-16 22:05:59,098 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-32
+2026-08-16 22:06:00,065 INFO o.a.j.r.Summariser: summary +    387 in 00:00:30 =   12.9/s Avg:     3 Min:     1 Max:    17 Err:    27 (6.98%) Active: 45 Started: 45 Finished: 0
+2026-08-16 22:06:00,066 INFO o.a.j.r.Summariser: summary =    501 in 00:00:56 =    9.0/s Avg:     3 Min:     1 Max:    87 Err:    39 (7.78%)
+2026-08-16 22:06:00,857 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-33
+2026-08-16 22:06:02,612 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-34
+2026-08-16 22:06:04,360 INFO o.a.j.t.JMeterThread: Thread started: TG-3 Admin FR-15 3-3
+2026-08-16 22:06:04,370 INFO o.a.j.t.JMeterThread: Thread started: TG-2 Auth Burst 2-12
+2026-08-16 22:06:04,371 INFO o.a.j.t.JMeterThread: Thread started: TG-1 Main User Journey 1-35
+2026-08-16 22:06:30,037 INFO o.a.j.r.Summariser: summary +    580 in 00:00:30 =   19.4/s Avg:     4 Min:     0 Max:    18 Err:    47 (8.10%) Active: 50 Started: 50 Finished: 0
+2026-08-16 22:06:30,039 INFO o.a.j.r.Summariser: summary =   1081 in 00:01:26 =   12.6/s Avg:     4 Min:     0 Max:    87 Err:    86 (7.96%)
+2026-08-16 22:07:00,038 INFO o.a.j.r.Summariser: summary +    588 in 00:00:30 =   19.6/s Avg:     3 Min:     1 Max:    24 Err:    41 (6.97%) Active: 50 Started: 50 Finished: 0
+2026-08-16 22:07:00,038 INFO o.a.j.r.Summariser: summary =   1669 in 00:01:56 =   14.4/s Avg:     3 Min:     0 Max:    87 Err:   127 (7.61%)
+2026-08-16 22:07:30,124 INFO o.a.j.r.Summariser: summary +    593 in 00:00:30 =   19.7/s Avg:     3 Min:     0 Max:    17 Err:    51 (8.60%) Active: 50 Started: 50 Finished: 0
+2026-08-16 22:07:30,124 INFO o.a.j.r.Summariser: summary =   2262 in 00:02:26 =   15.5/s Avg:     3 Min:     0 Max:    87 Err:   178 (7.87%)
+2026-08-16 22:08:00,089 INFO o.a.j.r.Summariser: summary +    592 in 00:00:30 =   19.8/s Avg:     4 Min:     0 Max:   174 Err:    49 (8.28%) Active: 50 Started: 50 Finished: 0
+2026-08-16 22:08:00,090 INFO o.a.j.r.Summariser: summary =   2854 in 00:02:56 =   16.2/s Avg:     3 Min:     0 Max:   174 Err:   227 (7.95%)
+2026-08-16 22:08:30,043 INFO o.a.j.r.Summariser: summary +    588 in 00:00:30 =   19.6/s Avg:     4 Min:     0 Max:    25 Err:    47 (7.99%) Active: 50 Started: 50 Finished: 0
+2026-08-16 22:08:30,044 INFO o.a.j.r.Summariser: summary =   3442 in 00:03:26 =   16.7/s Avg:     4 Min:     0 Max:   174 Err:   274 (7.96%)
+2026-08-16 22:09:00,084 INFO o.a.j.r.Summariser: summary +    590 in 00:00:30 =   19.6/s Avg:     4 Min:     0 Max:    38 Err:    41 (6.95%) Active: 50 Started: 50 Finished: 0
+2026-08-16 22:09:00,085 INFO o.a.j.r.Summariser: summary =   4032 in 00:03:56 =   17.1/s Avg:     4 Min:     0 Max:   174 Err:   315 (7.81%)
+2026-08-16 22:09:30,002 INFO o.a.j.r.Summariser: summary +    586 in 00:00:30 =   19.6/s Avg:     4 Min:     0 Max:    45 Err:    50 (8.53%) Active: 50 Started: 50 Finished: 0
+2026-08-16 22:09:30,003 INFO o.a.j.r.Summariser: summary =   4618 in 00:04:26 =   17.4/s Avg:     4 Min:     0 Max:   174 Err:   365 (7.90%)
+2026-08-16 22:10:00,073 INFO o.a.j.r.Summariser: summary +    592 in 00:00:30 =   19.7/s Avg:     2 Min:     0 Max:    18 Err:    39 (6.59%) Active: 50 Started: 50 Finished: 0
+2026-08-16 22:10:00,073 INFO o.a.j.r.Summariser: summary =   5210 in 00:04:56 =   17.6/s Avg:     3 Min:     0 Max:   174 Err:   404 (7.75%)
+2026-08-16 22:10:24,946 INFO o.a.j.r.ResultCollector: Shutdown hook started
+2026-08-16 22:10:24,948 INFO o.a.j.r.ResultCollector: Shutdown hook ended

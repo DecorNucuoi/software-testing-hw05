@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-08-17T10:38:08.103Z",
+  "base_url": "http://localhost:3000",
+  "db_path": "D:\\eshop-sut_1\\eshop-sut\\backend\\database.sqlite",
+  "sqlite3_path": "D:\\eshop-sut_1\\eshop-sut\\backend\\node_modules\\sqlite3\\lib\\sqlite3.js",
+  "N": 300,
+  "expected_users": 302,
+  "blocks": [
+    {
+      "name": "MAIN",
+      "offset": 0,
+      "count": 220
+    },
+    {
+      "name": "AUTH",
+      "offset": 1000,
+      "count": 80
+    }
+  ],
+  "snapshot": {
+    "users": 302,
+    "products": 5,
+    "categories": 3,
+    "coupons": 4,
+    "orders": 0,
+    "coupon_usage": 0,
+    "users_distinct_email": 302
+  }
+}
